@@ -1,0 +1,9 @@
+settings_captcha:
+  api_key: "..." # your api key from https://discord.gg/EvWWqtque9.
+  http_version: "2" # 2 or 3. If you set 3, your proxy should support UDP.
+  solve_pow: true # true or false. Need set true if you get many errors "pow"
+
+settings_register:
+  threads: 10 # set the number threads. If you set many, be sure your proxies support this.
+  limit_accounts: 10 # How many accounts do we register?
+

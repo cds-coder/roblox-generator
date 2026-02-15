@@ -1,0 +1,12 @@
+protocol://user:pass@host:port
+protocol://user:pass@host:port
+protocol://user:pass@host:port
+protocol://user:pass@host:port
+protocol://user:pass@host:port
+protocol://user:pass@host:port
+protocol://user:pass@host:port
+protocol://user:pass@host:port
+protocol://user:pass@host:port
+protocol://user:pass@host:port
+protocol://user:pass@host:port
+protocol://user:pass@host:port

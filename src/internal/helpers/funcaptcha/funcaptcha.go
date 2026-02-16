@@ -11,7 +11,7 @@ import (
 
 var client = &http.Client{}
 
-func GetToken(api_key, http_version, blob, proxy, cookies string, solvePOW bool) (*string, error) {
+func GetToken(api_key, http_version, browser_version, blob, proxy, cookies string, solvePOW bool) (*string, error) {
 
 	body := map[string]interface{}{
 		"api_key":      api_key,
@@ -22,6 +22,10 @@ func GetToken(api_key, http_version, blob, proxy, cookies string, solvePOW bool)
 		"cookies":      cookies,
 		"http_version": http_version,
 		"solve_pow":    solvePOW,
+	}
+
+	if browser_version != "" {
+		body["browser_version"] = browser_version
 	}
 
 	jsonBody, _ := json.Marshal(body)

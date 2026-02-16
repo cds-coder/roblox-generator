@@ -1,6 +1,7 @@
 settings_captcha:
   api_key: "..." # your api key from https://discord.gg/EvWWqtque9.
   http_version: "2" # 2 or 3. If you set 3, your proxy should support UDP.
+  browser_version: "145" # set "actual" or custom version
   solve_pow: true # true or false. Need set true if you get many errors "pow"
 
 settings_register:

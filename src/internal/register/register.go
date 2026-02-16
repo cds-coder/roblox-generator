@@ -39,8 +39,8 @@ var (
 
 const (
 	maxRetries      = 3
-	userAgent       = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
-	sec_ch_ua       = `"Not(A:Brand";v="8", "Chromium";v="144", "Google Chrome";v="144"`
+	userAgent       = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
+	sec_ch_ua       = `"Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145"`
 	accept_language = "en-US,en;q=0.9"
 )
 
@@ -343,13 +343,31 @@ func (g *Container) SignUp() error {
 	}
 
 	body := &class.SignupPayload{
-		Username:                   g.User,
-		Password:                   g.Password,
-		Birthday:                   g.Birthday,
-		Gender:                     g.Gender,
-		IsTosAgreementBoxChecked:   true,
-		Locale:                     "en-us",
-		AgreementIds:               []string{"306cc852-3717-4996-93e7-086daafd42f6", "2ba6b930-4ba8-4085-9e8c-24b919701f15"},
+		Username:                 g.User,
+		Password:                 g.Password,
+		Birthday:                 g.Birthday,
+		Gender:                   g.Gender,
+		IsTosAgreementBoxChecked: true,
+		AgreementIds:             []string{"306cc852-3717-4996-93e7-086daafd42f6", "2ba6b930-4ba8-4085-9e8c-24b919701f15"},
+		AuditContent: class.AuditSystemContent{
+			CapturedAuditContent: map[string]class.AuditItem{
+				"Authentication.SignUp.Label.Birthday": {
+					TranslationKey:         "Label.Birthday",
+					TranslationNamespace:   "Authentication.SignUp",
+					TranslatedSourceString: "Birthday",
+				},
+				"Authentication.SignUp.Description.SignUpAgreement.FullCopy": {
+					TranslationKey:         "Description.SignUpAgreement.FullCopy",
+					TranslationNamespace:   "Authentication.SignUp",
+					TranslatedSourceString: "By clicking Sign Up, you are agreeing...",
+					Parameters: map[string]string{
+						"termsOfUseLink":    "<a target=\"_blank\" href=\"https://www.roblox.com/info/terms\">Terms of Use</a>",
+						"privacyPolicyLink": "<a target=\"_blank\" href=\"https://www.roblox.com/info/privacy\">Privacy Policy</a>",
+					},
+				},
+			},
+			AdditionalAuditContent: map[string]any{},
+		},
 		SecureAuthenticationIntent: secureAuth,
 	}
 
@@ -402,7 +420,7 @@ func (g *Container) SignUp() error {
 		ArkoseBlob := ark.DataExchangeBlob
 		UnifiedCaptchaId := ark.UnifiedCaptchaId
 
-		token, err := funcaptcha.GetToken(g.CapConfig.Api_Key, g.CapConfig.Http_Version, ArkoseBlob, g.Proxy, "test=test", g.CapConfig.Solve_POW)
+		token, err := funcaptcha.GetToken(g.CapConfig.Api_Key, g.CapConfig.Http_Version, g.CapConfig.Browser_Version, ArkoseBlob, g.Proxy, "test=test", g.CapConfig.Solve_POW)
 
 		if err != nil {
 			return err

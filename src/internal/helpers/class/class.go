@@ -31,14 +31,26 @@ type SecureAuth struct {
 }
 
 type SignupPayload struct {
-	Username                   string      `json:"username"`
-	Password                   string      `json:"password"`
-	Birthday                   string      `json:"birthday"`
-	Gender                     int         `json:"gender"`
-	IsTosAgreementBoxChecked   bool        `json:"isTosAgreementBoxChecked"`
-	Locale                     string      `json:"locale"`
-	AgreementIds               []string    `json:"agreementIds"`
-	SecureAuthenticationIntent *SecureAuth `json:"secureAuthenticationIntent"`
+	Username                   string             `json:"username"`
+	Password                   string             `json:"password"`
+	Birthday                   string             `json:"birthday"`
+	Gender                     int                `json:"gender"`
+	IsTosAgreementBoxChecked   bool               `json:"isTosAgreementBoxChecked"`
+	AgreementIds               []string           `json:"agreementIds"`
+	AuditContent               AuditSystemContent `json:"auditSystemContent"`
+	SecureAuthenticationIntent *SecureAuth        `json:"secureAuthenticationIntent"`
+}
+
+type AuditSystemContent struct {
+	CapturedAuditContent   map[string]AuditItem `json:"capturedAuditContent"`
+	AdditionalAuditContent map[string]any       `json:"additionalAuditContent"`
+}
+
+type AuditItem struct {
+	TranslationKey         string            `json:"translationKey"`
+	TranslationNamespace   string            `json:"translationNamespace"`
+	TranslatedSourceString string            `json:"translatedSourceString"`
+	Parameters             map[string]string `json:"parameters,omitempty"`
 }
 
 type ArkoseResponse struct {
@@ -64,9 +76,10 @@ type Config struct {
 }
 
 type CaptchaConfig struct {
-	Api_Key      string `yaml:"api_key"`
-	Http_Version string `yaml:"http_version"`
-	Solve_POW    bool   `yaml:"solve_pow"`
+	Api_Key         string `yaml:"api_key"`
+	Http_Version    string `yaml:"http_version"`
+	Browser_Version string `yaml:"browser_version"`
+	Solve_POW       bool   `yaml:"solve_pow"`
 }
 
 type RegisterConfig struct {

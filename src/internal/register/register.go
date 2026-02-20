@@ -492,36 +492,48 @@ func (g *Container) SignUp() error {
 			return fmt.Errorf("reject continiue by API")
 		} else {
 
-			g.HttpClient.OrderedHeaders = azuretls.OrderedHeaders{
-				{"content-length", strconv.Itoa(len(dataSignup))},
-				{"rblx-challenge-metadata", metaBase64},
-				{"sec-ch-ua-platform", "\"Windows\""},
-				{"x-csrf-token", g.XCsrfToken},
-				{"sec-ch-ua", sec_ch_ua},
-				{"rblx-challenge-id", UnifiedCaptchaId},
-				{"rblx-challenge-type", "captcha"},
-				{"sec-ch-ua-mobile", "?0"},
-				{"user-agent", userAgent},
-				{"accept", "application/json, text/plain, */*"},
-				{"content-type", "application/json;charset=UTF-8"},
-				{"x-retry-attempt", "1"},
-				{"origin", "https://www.roblox.com"},
-				{"sec-fetch-site", "same-site"},
-				{"sec-fetch-mode", "cors"},
-				{"sec-fetch-dest", "empty"},
-				{"referer", "https://www.roblox.com/"},
-				{"accept-encoding", "gzip, deflate, br, zstd"},
-				{"accept-language", accept_language},
-			}
+			for attempt := 1; attempt <= maxRetries; attempt++ {
+				g.HttpClient.OrderedHeaders = azuretls.OrderedHeaders{
+					{"content-length", strconv.Itoa(len(dataSignup))},
+					{"rblx-challenge-metadata", metaBase64},
+					{"sec-ch-ua-platform", "\"Windows\""},
+					{"x-csrf-token", g.XCsrfToken},
+					{"sec-ch-ua", sec_ch_ua},
+					{"rblx-challenge-id", UnifiedCaptchaId},
+					{"rblx-challenge-type", "captcha"},
+					{"sec-ch-ua-mobile", "?0"},
+					{"user-agent", userAgent},
+					{"accept", "application/json, text/plain, */*"},
+					{"content-type", "application/json;charset=UTF-8"},
+					{"x-retry-attempt", "1"},
+					{"origin", "https://www.roblox.com"},
+					{"sec-fetch-site", "same-site"},
+					{"sec-fetch-mode", "cors"},
+					{"sec-fetch-dest", "empty"},
+					{"referer", "https://www.roblox.com/"},
+					{"accept-encoding", "gzip, deflate, br, zstd"},
+					{"accept-language", accept_language},
+				}
 
-			g.HttpClient.OrderedHeaders = append(g.HttpClient.OrderedHeaders, g.Cookies...)
+				g.HttpClient.OrderedHeaders = append(g.HttpClient.OrderedHeaders, g.Cookies...)
 
-			g.HttpClient.OrderedHeaders = append(g.HttpClient.OrderedHeaders, []string{"priority", "u=1, i"})
+				g.HttpClient.OrderedHeaders = append(g.HttpClient.OrderedHeaders, []string{"priority", "u=1, i"})
 
-			response, err = g.DoRequest("POST", "https://auth.roblox.com/v2/signup", dataSignup)
+				response, err = g.DoRequest("POST", "https://auth.roblox.com/v2/signup", dataSignup)
 
-			if err != nil {
-				return fmt.Errorf("signup error")
+				if err != nil {
+					return fmt.Errorf("signup error")
+				}
+
+				if string(response.Body) == `{"code":0,"message":"Token Validation Failed"}` {
+					csrf := string(response.Header.Get("X-Csrf-Token"))
+					if csrf != "" {
+						g.XCsrfToken = csrf
+					}
+					continue
+				} else {
+					break
+				}
 			}
 
 			cookies := response.Header.Get("set-cookie")

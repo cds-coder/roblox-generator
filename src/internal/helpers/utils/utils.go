@@ -10,6 +10,7 @@ import (
 	"crypto/x509"
 	"encoding/asn1"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -53,6 +54,27 @@ func init() {
 	}
 
 	proxies = lines
+}
+
+func eZ() string {
+	b := make([]byte, 16)
+	_, err := rand.Read(b)
+	if err != nil {
+		panic(err)
+	}
+
+	b[6] = (b[6] & 0x0f) | 0x40
+	b[8] = (b[8] & 0x3f) | 0x80
+
+	return hex.EncodeToString(b)
+}
+
+func e8() string {
+	id := eZ()
+	if len(id) < 16 {
+		return ""
+	}
+	return id[16:]
 }
 
 func GetProxy() string {
@@ -100,6 +122,10 @@ func GenerateSecureAuth(serverNonce string) (*class.SecureAuth, error) {
 		ServerNonce:          serverNonce,
 		SaiSignature:         saiSignature,
 	}, nil
+}
+
+func GetTransparent() string {
+	return fmt.Sprintf("00-%s-%s-00", eZ(), e8())
 }
 
 func ParseArkoseHeader(headerVal string) (*class.ArkoseResponse, error) {

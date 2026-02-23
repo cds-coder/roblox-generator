@@ -21,15 +21,16 @@ import (
 )
 
 type Container struct {
-	HttpClient *azuretls.Session
-	Proxy      string
-	Cookies    [][]string
-	CapConfig  class.CaptchaConfig
-	User       string
-	Password   string
-	Birthday   string
-	Gender     int
-	XCsrfToken string
+	HttpClient  *azuretls.Session
+	Proxy       string
+	Cookies     [][]string
+	CapConfig   class.CaptchaConfig
+	User        string
+	Password    string
+	Birthday    string
+	Gender      int
+	XCsrfToken  string
+	Transparent string
 }
 
 var (
@@ -47,13 +48,14 @@ const (
 func RegistrationProcess(CaptchaConfig class.CaptchaConfig, worker_id int) bool {
 
 	RegistrationContainer := &Container{
-		Proxy:      utils.GetProxy(),
-		HttpClient: azuretls.NewSession(),
-		CapConfig:  CaptchaConfig,
-		User:       roblox_profile.GetUsername(),
-		Password:   roblox_profile.GetPassword(),
-		Birthday:   roblox_profile.GetBirthDay(),
-		Gender:     roblox_profile.GetGender(),
+		Proxy:       utils.GetProxy(),
+		Transparent: utils.GetTransparent(),
+		HttpClient:  azuretls.NewSession(),
+		CapConfig:   CaptchaConfig,
+		User:        roblox_profile.GetUsername(),
+		Password:    roblox_profile.GetPassword(),
+		Birthday:    roblox_profile.GetBirthDay(),
+		Gender:      roblox_profile.GetGender(),
 	}
 
 	utils.Output("INFO", fmt.Sprintf("Start generate - %s", RegistrationContainer.User))
@@ -199,13 +201,14 @@ func (g *Container) BeforeSignUp() error {
 
 	g.HttpClient.OrderedHeaders = azuretls.OrderedHeaders{
 		{"content-length", strconv.Itoa(len(data))},
-		{"sec-ch-ua-platform", "\"Windows\""},
+		{"sec-ch-ua-platform", `"Windows"`},
 		{"x-csrf-token", g.XCsrfToken},
+		{"sec-ch-ua", sec_ch_ua},
+		{"sec-ch-ua-mobile", "?0"},
+		{"traceparent", g.Transparent},
 		{"user-agent", userAgent},
 		{"accept", "application/json, text/plain, */*"},
-		{"sec-ch-ua", sec_ch_ua},
 		{"content-type", "application/json;charset=UTF-8"},
-		{"sec-ch-ua-mobile", "?0"},
 		{"origin", "https://www.roblox.com"},
 		{"sec-fetch-site", "same-site"},
 		{"sec-fetch-mode", "cors"},
@@ -251,13 +254,14 @@ func (g *Container) BeforeSignUp() error {
 
 		g.HttpClient.OrderedHeaders = azuretls.OrderedHeaders{
 			{"content-length", strconv.Itoa(len(data))},
-			{"sec-ch-ua-platform", "\"Windows\""},
+			{"sec-ch-ua-platform", `Windows"`},
 			{"x-csrf-token", g.XCsrfToken},
+			{"sec-ch-ua", sec_ch_ua},
+			{"sec-ch-ua-mobile", "?0"},
+			{"traceparent", g.Transparent},
 			{"user-agent", userAgent},
 			{"accept", "application/json, text/plain, */*"},
-			{"sec-ch-ua", sec_ch_ua},
 			{"content-type", "application/json;charset=UTF-8"},
-			{"sec-ch-ua-mobile", "?0"},
 			{"origin", "https://www.roblox.com"},
 			{"sec-fetch-site", "same-site"},
 			{"sec-fetch-mode", "cors"},
@@ -306,6 +310,7 @@ func (g *Container) SignUp() error {
 	var secureAuth *class.SecureAuth
 
 	g.HttpClient.OrderedHeaders = azuretls.OrderedHeaders{
+		{"traceparent", g.Transparent},
 		{"sec-ch-ua-platform", "\"Windows\""},
 		{"user-agent", userAgent},
 		{"accept", "application/json, text/plain, */*"},
@@ -381,11 +386,12 @@ func (g *Container) SignUp() error {
 		{"content-length", strconv.Itoa(len(dataSignup))},
 		{"sec-ch-ua-platform", "\"Windows\""},
 		{"x-csrf-token", g.XCsrfToken},
+		{"sec-ch-ua", sec_ch_ua},
+		{"sec-ch-ua-mobile", "?0"},
+		{"traceparent", g.Transparent},
 		{"user-agent", userAgent},
 		{"accept", "application/json, text/plain, */*"},
-		{"sec-ch-ua", sec_ch_ua},
 		{"content-type", "application/json;charset=UTF-8"},
-		{"sec-ch-ua-mobile", "?0"},
 		{"origin", "https://www.roblox.com"},
 		{"sec-fetch-site", "same-site"},
 		{"sec-fetch-mode", "cors"},
@@ -464,11 +470,12 @@ func (g *Container) SignUp() error {
 			{"content-length", strconv.Itoa(len(body))},
 			{"sec-ch-ua-platform", "\"Windows\""},
 			{"x-csrf-token", g.XCsrfToken},
+			{"sec-ch-ua", sec_ch_ua},
+			{"sec-ch-ua-mobile", "?0"},
+			{"traceparent", g.Transparent},
 			{"user-agent", userAgent},
 			{"accept", "application/json, text/plain, */*"},
-			{"sec-ch-ua", sec_ch_ua},
 			{"content-type", "application/json;charset=UTF-8"},
-			{"sec-ch-ua-mobile", "?0"},
 			{"origin", "https://www.roblox.com"},
 			{"sec-fetch-site", "same-site"},
 			{"sec-fetch-mode", "cors"},
@@ -502,6 +509,7 @@ func (g *Container) SignUp() error {
 					{"rblx-challenge-id", UnifiedCaptchaId},
 					{"rblx-challenge-type", "captcha"},
 					{"sec-ch-ua-mobile", "?0"},
+					{"traceparent", g.Transparent},
 					{"user-agent", userAgent},
 					{"accept", "application/json, text/plain, */*"},
 					{"content-type", "application/json;charset=UTF-8"},

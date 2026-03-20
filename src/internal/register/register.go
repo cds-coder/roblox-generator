@@ -40,8 +40,8 @@ var (
 
 const (
 	maxRetries      = 3
-	userAgent       = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
-	sec_ch_ua       = `"Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145"`
+	userAgent       = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+	sec_ch_ua       = `"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"`
 	accept_language = "en-US,en;q=0.9"
 )
 
@@ -219,7 +219,7 @@ func (g *Container) BeforeSignUp() error {
 		{"priority", "u=1, i"},
 	}
 
-	response, err = g.DoRequest("POST", "https://auth.roblox.com/v1/usernames/validate", data)
+	response, err = g.DoRequest("POST", "https://auth.roblox.com/v1/usernames/validate?urlLocale=en_us", data)
 
 	if err != nil {
 		return fmt.Errorf("userValidate request error")
@@ -231,7 +231,7 @@ func (g *Container) BeforeSignUp() error {
 
 		g.HttpClient.OrderedHeaders.Set("x-csrf-token", g.XCsrfToken)
 
-		response, err = g.DoRequest("POST", "https://auth.roblox.com/v1/usernames/validate", data)
+		response, err = g.DoRequest("POST", "https://auth.roblox.com/v1/usernames/validate?urlLocale=en_us", data)
 
 		if err != nil {
 			return fmt.Errorf("userValidate request error")
@@ -280,7 +280,7 @@ func (g *Container) BeforeSignUp() error {
 			return fmt.Errorf("failed json")
 		}
 
-		response, err = g.DoRequest("POST", "https://auth.roblox.com/v1/validators/username", data)
+		response, err = g.DoRequest("POST", "https://auth.roblox.com/v1/validators/username?urlLocale=en_us", data)
 
 		if err != nil {
 			return fmt.Errorf("userValidator request error")
@@ -329,7 +329,7 @@ func (g *Container) SignUp() error {
 
 	g.HttpClient.OrderedHeaders = append(g.HttpClient.OrderedHeaders, []string{"priority", "u=1, i"})
 
-	response, err := g.DoRequest("GET", "https://apis.roblox.com/hba-service/v1/getServerNonce", nil)
+	response, err := g.DoRequest("GET", "https://apis.roblox.com/hba-service/v1/getServerNonce?urlLocale=en_us", nil)
 
 	if err != nil {
 		return fmt.Errorf("getServerNonce error")
@@ -405,7 +405,7 @@ func (g *Container) SignUp() error {
 
 	g.HttpClient.OrderedHeaders = append(g.HttpClient.OrderedHeaders, []string{"priority", "u=1, i"})
 
-	response, err = g.DoRequest("POST", "https://auth.roblox.com/v2/signup", dataSignup)
+	response, err = g.DoRequest("POST", "https://auth.roblox.com/v2/signup?urlLocale=en_us&urlLocale=en_us", dataSignup)
 
 	if err != nil {
 		return fmt.Errorf("getBlob error")
@@ -489,7 +489,7 @@ func (g *Container) SignUp() error {
 
 		g.HttpClient.OrderedHeaders = append(g.HttpClient.OrderedHeaders, []string{"priority", "u=1, i"})
 
-		response, err = g.DoRequest("POST", "https://apis.roblox.com/challenge/v1/continue", body)
+		response, err = g.DoRequest("POST", "https://apis.roblox.com/challenge/v1/continue?urlLocale=en_us", body)
 
 		if err != nil {
 			return fmt.Errorf("captchaContiniue error")
@@ -527,7 +527,7 @@ func (g *Container) SignUp() error {
 
 				g.HttpClient.OrderedHeaders = append(g.HttpClient.OrderedHeaders, []string{"priority", "u=1, i"})
 
-				response, err = g.DoRequest("POST", "https://auth.roblox.com/v2/signup", dataSignup)
+				response, err = g.DoRequest("POST", "https://auth.roblox.com/v2/signup?urlLocale=en_us&urlLocale=en_us", dataSignup)
 
 				if err != nil {
 					return fmt.Errorf("signup error")
